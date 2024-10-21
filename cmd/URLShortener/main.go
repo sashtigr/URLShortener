@@ -2,8 +2,9 @@ package main
 
 import (
 	"URLShortener/internal/config"
-	"URLShortener/internal/http-server/handlers/url/save"
-	mwLogger "URLShortener/internal/http-server/middleware/logger"
+	"URLShortener/internal/httpserver/handlers/redirect"
+	"URLShortener/internal/httpserver/handlers/url/save"
+	mwLogger "URLShortener/internal/httpserver/middleware/logger"
 	"URLShortener/internal/lib/logger/handlers/slogpretty"
 	"URLShortener/internal/lib/logger/sl"
 	"URLShortener/internal/storage/sqlite"
@@ -45,6 +46,8 @@ func main() {
 	router.Use(middleware.URLFormat)
 
 	router.Post("/url", save.New(log, storage))
+
+	router.Get("/{alias}", redirect.New(log, storage))
 
 	log.Info("starting server", slog.String("address", cfg.Address))
 
